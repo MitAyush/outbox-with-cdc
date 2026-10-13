@@ -1,0 +1,26 @@
+// kafka properties
+/opt/kafka/config/server.properties
+
+// start server
+bin/kafka-server-start.sh  config/server.properties
+
+// list topic
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+// create topic
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic order --partitions 2 --replication-factor 1
+
+// describe topic
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic order
+
+// publish on topic
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic order --reader-property parse.key=true --reader-property key.separator=:
+
+// delete topic
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic order
+
+// postgres
+docker exec -it experiment-postgres psql -U experiment -d orders_db
+
+// show create table
+\d+ orders;
