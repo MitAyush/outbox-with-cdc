@@ -276,6 +276,13 @@ func StartCDC(ctx context.Context, db *pgx.Conn) {
 					// will replace this with a Kafka write. Do NOT advance lastAckLSN
 					// until Kafka confirms the transaction was durably written.
 					for i, event := range currentTxn.Events {
+						// will publish the event to kafka here
+						// and wait for the ack from kafka
+						// if ack is received then only we will advance the lastAckLSN
+						// else we will retry for some time and then fail
+						// and exit the program
+						// if we are able to send the message to kafka
+						// then we will advance the lastAckLSN
 						log.Printf("TRANSACTION EVENT %d/%d: type=%s table=%s data=%+v",
 							i+1, len(currentTxn.Events), event.Type, event.Table, event.Data)
 					}
