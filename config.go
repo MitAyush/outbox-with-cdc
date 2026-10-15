@@ -1,6 +1,6 @@
 package main
 
-import "github.com/MitAyush/experiment1/models"
+import "github.com/MitAyush/outbox-with-cdc/models"
 
 func NewConfig() *models.Config {
 	return &models.Config{
@@ -10,6 +10,6 @@ func NewConfig() *models.Config {
 		DBPort:       "5432",
 		DefaultDB:    "orders_db",
 		KafkaBrokers: []string{"localhost:9092"},
-		WorkerCnt:    1,
+		WorkerCnt:    0,
 	}
 }

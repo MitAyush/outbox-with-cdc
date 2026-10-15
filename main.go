@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 
-	"github.com/MitAyush/experiment1/db"
-	"github.com/MitAyush/experiment1/processors"
+	"github.com/MitAyush/outbox-with-cdc/database"
+	"github.com/MitAyush/outbox-with-cdc/processors"
+	"github.com/MitAyush/outbox-with-cdc/cdc"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	config := NewConfig()
-	dbConn := db.NewDBConnection(ctx, config)
-
+	dbConn := database.NewDBConnection(ctx, config)
 
 	for i := 0; i < config.WorkerCnt; i++ {
 		// start consumer
@@ -21,15 +21,18 @@ func main() {
 		}(i)
 	}
 
+	// start CDD
+
+	cdc.StartCDC(ctx, dbConn)
 
 	// to block main
 	ch := make(chan bool)
-	select {	
-		case <-ctx.Done():
-			cancel()
-			dbConn.Close(ctx)
-		case <-ch:
-			return
+	select {
+	case <-ctx.Done():
+		cancel()
+		dbConn.Close(ctx)
+	case <-ch:
+		return
 	}
 
 }

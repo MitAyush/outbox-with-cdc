@@ -7,6 +7,14 @@ services:
       POSTGRES_USER: experiment
       POSTGRES_PASSWORD: experiment123
       POSTGRES_DB: orders_db
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
     ports:
       - "5432:5432"
     volumes:

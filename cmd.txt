@@ -20,7 +20,31 @@ bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic order --
 bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic order
 
 // postgres
-docker exec -it experiment-postgres psql -U experiment -d orders_db
+sudo docker exec -it experiment-postgres psql -U experiment -d orders_db
+
+// show all tables
+\dt
 
 // show create table
 \d+ orders;
+
+
+// how to enable wal_level logical in postgresql
+ALTER SYSTEM SET wal_level = logical;
+SELECT pg_reload_conf();
+SHOW wal_level;
+
+* CREATE ROLE cdc_user WITH LOGIN REPLICATION PASSWORD 'cdc_password';
+* GRANT CONNECT ON DATABASE orders_db TO cdc_user;
+* GRANT USAGE ON SCHEMA public TO cdc_user;
+* GRANT SELECT ON TABLE public.orders TO cdc_user;
+* CREATE PUBLICATION order_publication FOR TABLE public.orders;
+
+our sequence is
+
+* [db]Configure PostgreSQL with wal_level=logical.
+* [db]Create a publication describing which table changes to expose.
+* [go]Connect using the replication protocol.
+* [go]Create a logical replication slot.
+* [go]Start replication from a suitable WAL position.
+* [go]Read the stream of changes.
