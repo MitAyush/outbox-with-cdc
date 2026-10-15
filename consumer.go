@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/MitAyush/experiment1/processors"
+	"github.com/MitAyush/outbox-with-cdc/processors"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -35,7 +35,7 @@ func (c *Consumer) Start(processor processors.Processor) {
 		msg, err := c.Reader.FetchMessage(context.Background())
 		if err != nil {
 			log.Printf("Failed to fetch message, %v", err)
-			log.Fatal(err)
+			return
 		}
 
 		// process the msg
